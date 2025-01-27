@@ -22,23 +22,11 @@ class CategoryRetriever
     public function getCategoryTree(): array
     {
         $query = "
-            WITH RECURSIVE cat AS (
-            SELECT 
+                SELECT 
                 group_id,
                 name,
                 parent_id
-            FROM categories
-            WHERE parent_id = '0'
-            UNION ALL
-            SELECT 
-                t.group_id,
-                t.name,
-                t.parent_id
-            FROM categories t
-            INNER JOIN cat ON t.parent_id = cat.group_id
-        )
-        SELECT * FROM cat limit 100"
-        ;
+            FROM categories";
 
         return $this->fetchCategories($query);
     }

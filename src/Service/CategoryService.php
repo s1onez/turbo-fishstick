@@ -51,8 +51,39 @@ class CategoryService implements ServiceInterface {
         return $retriever->getCategoryTree();
     }
 
+    public function prepareData(array $categories): array
+    {
+        $categoriesRaw = [];
+        $tree = [];
+
+        foreach ($categories as $row) {
+            $categoriesRaw[$row['group_id']] = [
+                "_children" => [],
+                "group_id" => $row['group_id'],
+                "parent_id" => $row['parent_id'],
+                "name" => $row['name']
+            ];
+        }
+
+        foreach ($categoriesRaw as $group_id => &$category) {
+            if (!empty($category['parent_id']) && isset($categoriesRaw[$category['parent_id']])) {
+                $categoriesRaw[$category['parent_id']]['_children'][$group_id] = &$category;
+            }
+        }
+
+        foreach ($categoriesRaw as $group_id => $categoryEntry) {
+            if (empty($categoryEntry['parent_id']) || !isset($categoriesRaw[$categoryEntry['parent_id']])) {
+                $tree[$group_id] = $categoryEntry;
+            }
+        }
+
+        return $tree;
+    }
+
+
     /**
-     * Prepare the category tree
+     * Prepare the category tree recursively. This function is deprecated and will be removed in future versions.
+     * @deprecated use prepareData instead
      * @param array $data
      * @param string $parentId
      * @return array
@@ -92,7 +123,7 @@ class CategoryService implements ServiceInterface {
      */
     public function print(): string
     {
-        $data = $this->formatData($this->getData());
+        $data = $this->prepareData($this->getData());
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 }

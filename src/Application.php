@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Database\Connection;
+use App\Infrastructure\Database\MysqlConnection;
 use App\Service\CategoryService;
 use Throwable;
 
@@ -20,7 +20,7 @@ class Application
     {
         try {
             //todo: Connection Interface for future DI
-            $db = new Connection();
+            $db = new MysqlConnection();
             $service = new CategoryService($db->get());
             $service->execute();
             echo $service->print();

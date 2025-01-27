@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Database;
+namespace App\Infrastructure\Database;
 
-use PDO;
 use App\Infrastructure\ConnectionInterface;
+use PDO;
 
 /**
  * DB connection class
  */
-class Connection implements ConnectionInterface
+class MysqlConnection implements ConnectionInterface
 {
     private PDO $pdo;
 
